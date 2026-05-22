@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductRating } from "./product-rating";
 import { formatPrice } from "@/utils/format";
+import { toast } from "sonner";
 
 interface ProductCardProps {
   product: Product;
@@ -22,6 +23,7 @@ export const ProductCard = memo(function ProductCard({ product }: ProductCardPro
   function handleAddToCart(e: MouseEvent) {
     e.preventDefault();
     addItem(product);
+    toast.success(`${product!.title} added to cart`);
   }
 
   function handleToggleWishlist(e: MouseEvent) {

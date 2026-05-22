@@ -26,6 +26,7 @@ export function ProductDetailsPage() {
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  //here we are fetching the current category list to show in recent 
   const { data: relatedData } = useProducts({
     ...defaultFilters,
     category: product?.category ?? "",
@@ -123,11 +124,10 @@ export function ProductDetailsPage() {
                 <button
                   key={i}
                   onClick={() => setSelectedImage(img)}
-                  className={`size-16 shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
-                    activeImage === img
-                      ? "border-zinc-900"
-                      : "border-transparent hover:border-zinc-300"
-                  }`}
+                  className={`size-16 shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${activeImage === img
+                    ? "border-zinc-900"
+                    : "border-transparent hover:border-zinc-300"
+                    }`}
                   aria-label={`View image ${i + 1}`}
                 >
                   <img
@@ -213,9 +213,8 @@ export function ProductDetailsPage() {
               aria-label={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
             >
               <Heart
-                className={`size-4 transition-colors ${
-                  wishlisted ? "fill-zinc-900" : ""
-                }`}
+                className={`size-4 transition-colors ${wishlisted ? "fill-zinc-900" : ""
+                  }`}
               />
             </Button>
           </div>
