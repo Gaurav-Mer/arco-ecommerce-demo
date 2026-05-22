@@ -9,7 +9,7 @@ import { useCart } from "@/hooks/use-cart";
 
 export function OrderConfirmationPage() {
   const { state } = useLocation();
-  console.log(state)
+
   const navigate = useNavigate();
   const { clearCart } = useCart()
   const order = state as OrderData | null;
