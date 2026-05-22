@@ -35,21 +35,23 @@ export function CartSummary() {
         <span>{formatPrice(totalPrice)}</span>
       </div>
 
-      <Button
-        className="mt-6 w-full gap-2"
-        size="lg"
-        onClick={() => navigate("/checkout")}
-      >
-        Checkout
-        <ArrowRight className="size-4" />
-      </Button>
+      <div className="fixed z-10 bg-white bottom-0 lg:static left-0 p-3 lg:p- w-full">
+        <Button
+          className="mt-6 w-full gap-2"
+          size="lg"
+          onClick={() => navigate("/checkout")}
+        >
+          Checkout
+          <ArrowRight className="size-4" />
+        </Button>
 
-      <Link
-        to="/"
-        className="mt-3 block text-center text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
-      >
-        Continue Shopping
-      </Link>
+        <Link
+          to="/"
+          className="mt-3 block text-center text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+        >
+          Continue Shopping
+        </Link>
+      </div>
     </div>
   );
 }

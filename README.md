@@ -1,99 +1,27 @@
 # Modern E-Commerce Platform
 
-A production-ready e-commerce frontend application built using React, TypeScript, and modern frontend engineering practices.
+A production-ready e-commerce frontend application built as part of a frontend engineering assignment using React, TypeScript, and modern frontend development practices.
 
-The application allows users to browse products, search and filter by category and price range, manage a wishlist and cart, complete a checkout flow with order confirmation, and experience a responsive, polished UI.
+The application allows users to browse products, search and filter products, manage cart and wishlist items, complete a checkout flow, and view an order confirmation page — all within a responsive and polished user experience.
+
+The primary focus of this project was to build a scalable, maintainable, and user-friendly frontend application while demonstrating clean architecture, reusable components, responsive design, and modern state management practices.
 
 ---
 
-# What I Built
+# Features / What I Built
 
-The project includes:
-
-- Product listing page with hero section
-- Product search, filtering (category + price range), and sorting
-- Product details page with image gallery and related products
-- Shopping cart with quantity controls and persistence
-- Wishlist feature with localStorage persistence
+- Product listing page with responsive product grid
+- Product search with debounced API calls
+- Product filtering by category and price range
+- Product sorting functionality
+- Product details page with related products
+- Shopping cart with quantity management
+- Wishlist functionality with persistence
 - Complete checkout flow with form validation
-- Order confirmation page with order summary
-- Responsive design (mobile-first)
-- Loading and error states throughout
-- Code-split routes with React.lazy + Suspense
-
-The focus was on building a scalable frontend architecture while maintaining clean UI/UX and production-oriented engineering practices.
-
----
-
-# Performance Decisions
-
-Performance was treated as a first-class concern, not an afterthought:
-
-## Memoization Strategy
-- **`React.memo` on `ProductCard` and `CartItem`**: the product grid re-renders on every filter change; without memoization each card would re-render even if its data didn't change. `memo` prevents this.
-- **`useMemo` in `useCart`**: `totalItems` and `totalPrice` are derived values recalculated only when `items` changes — not on every parent render.
-- **`useMemo` in `useProducts`**: the price range filter is applied as a client-side transform on cached API data. The query key intentionally excludes `priceRange` so that moving the slider never triggers a new network request.
-
-## Debouncing
-- **Search input**: 500 ms debounce prevents an API call on every keystroke.
-- **Price range slider**: 300 ms debounce prevents context updates on every pixel of drag — the UI updates immediately but the filter only propagates when the user stops moving.
-
-## Caching
-- TanStack Query caches product responses with a 5-minute stale time. Switching categories and back doesn't refetch; navigating between product detail pages reuses cached data.
-
-## Code Splitting
-- All pages are loaded with `React.lazy()` and wrapped in `Suspense` boundaries, so only the code for the current route is fetched on initial load.
-
-## Image Loading
-- Product images use `loading="lazy"` so only visible images are fetched on page load.
-
----
-
-# Key Engineering Decisions
-
-## Why React + Vite?
-Vite provides a fast development experience and optimised production builds with minimal configuration.
-
-## Why TypeScript?
-Static typing catches integration errors early — especially important across context → hook → component boundaries — and improves IDE tooling throughout.
-
-## Why TanStack Query?
-Simplifies async state: caching, deduplication, loading/error states, and stale-while-revalidate behaviour are handled out of the box, keeping component code clean.
-
-## Why Context API + useReducer Instead of Redux?
-The app has two pieces of global client state: cart and wishlist. Both follow the same reducer pattern. Redux would add ceremony without benefit at this scale; the pattern is still predictable and easy to trace.
-
-## Why Client-Side Price Filtering?
-DummyJSON doesn't support server-side price range queries. Rather than re-fetching on every slider move, the price range is applied as a `useMemo` transform on the already-cached response. This gives instant feedback with zero extra network cost.
-
-## Why Tailwind + shadcn/ui?
-Tailwind enables consistent, responsive styling with no runtime overhead. shadcn/ui provides accessible Radix UI primitives that match the design system without locking into a component library's opinionated styles.
-
----
-
-# Architecture & Folder Structure
-
-```bash
-src/
- ├── api/            # Axios instance + interceptors
- ├── components/
- │   ├── cart/       # CartItem, CartSummary
- │   ├── navbar/     # Sticky header with cart + wishlist badges
- │   ├── products/   # ProductCard (memoized), ProductGrid, ProductFiltersBar, RangeSlider
- │   └── ui/         # shadcn/ui primitives + RangeSlider
- ├── context/
- │   ├── cart/       # CartContext, cartReducer, CartAction types
- │   └── wishlist/   # WishlistContext, wishlistReducer, WishlistAction types
- ├── hooks/          # use-cart, use-wishlist, use-products (with client-side price filter), use-debounce
- ├── layouts/        # MainLayout (navbar + outlet + footer)
- ├── pages/          # HomePage, ProductDetailsPage, CartPage, CheckoutPage,
- │                   # OrderConfirmationPage, WishlistPage
- ├── providers/      # CartProvider, WishlistProvider, QueryProvider
- ├── routes/         # Code-split route definitions
- ├── services/       # product.service.ts (API calls)
- ├── types/          # Product, Cart, Wishlist, Order type definitions
- └── utils/          # formatPrice, formatRating, formatDiscount
-```
+- Order confirmation page
+- Responsive mobile-first UI
+- Loading, empty, and error states
+- Lazy loaded routes using `React.lazy` and `Suspense`
 
 ---
 
@@ -104,21 +32,60 @@ src/
 | Framework | React 19 + Vite |
 | Language | TypeScript |
 | Styling | Tailwind CSS + shadcn/ui |
-| State (client) | Context API + useReducer |
-| State (server) | TanStack Query v5 |
-| HTTP | Axios |
+| Client State | Context API + useReducer |
+| Server State | TanStack Query v5 |
+| HTTP Client | Axios |
 | Forms | React Hook Form + Zod |
-| Routing | React Router DOM v7 |
+| Routing | React Router DOM |
 | Notifications | Sonner |
 | API | DummyJSON Products API |
 
 ---
 
-# What I Would Add With More Time
+# Key Engineering Decisions
 
-- **Authentication & user accounts** — login/signup, profile, persisted order history
-- **Real payment gateway** — Stripe integration with proper error handling
-- **Unit + integration tests** — Jest + React Testing Library for hooks and reducers; Playwright for E2E checkout flow
-- **Infinite scroll** — `useInfiniteQuery` replacing the current full-fetch approach
-- **Product reviews** — user-submitted star ratings with optimistic updates
-- **CI/CD** — GitHub Actions for lint, typecheck, and build on every PR
+## Why React + Vite?
+Vite provides a fast development experience, fast HMR, and optimized production builds with minimal configuration.
+
+## Why TypeScript?
+TypeScript improves maintainability and catches integration errors early, especially across hooks, reducers, and shared components.
+
+## Why TanStack Query?
+TanStack Query was used to manage async server state including caching, loading states, stale data handling, and request deduplication.
+
+## Why Context API + useReducer?
+The application only required lightweight global state management for cart and wishlist functionality. Context + reducer provided predictable state updates without introducing unnecessary Redux boilerplate.
+
+## Why Client-Side Price Filtering?
+The API used for this assignment does not support server-side price range filtering. The price filtering is therefore applied on cached product data using memoization to avoid unnecessary network requests.
+
+## Why Tailwind CSS + shadcn/ui?
+Tailwind enabled fast and consistent UI development while shadcn/ui provided accessible and reusable UI primitives.
+
+---
+
+# Performance Optimizations
+
+- Debounced search input to reduce unnecessary API calls
+- Memoized product cards to avoid unnecessary re-renders
+- Cached API responses using TanStack Query
+- Lazy loaded routes using React Suspense
+- Lazy loaded product images using `loading="lazy"`
+
+---
+
+# Architecture & Folder Structure
+
+```bash
+src/
+ ├── api/            # Axios instance + interceptors
+ ├── components/     # Reusable UI and feature components
+ ├── context/        # Cart and wishlist state management
+ ├── hooks/          # Custom hooks
+ ├── layouts/        # Shared layouts
+ ├── pages/          # Application pages
+ ├── providers/      # App providers
+ ├── routes/         # Route configuration
+ ├── services/       # API service layer
+ ├── types/          # Shared TypeScript types
+ └── utils/          # Utility/helper functions

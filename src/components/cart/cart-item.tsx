@@ -28,8 +28,8 @@ export const CartItem = memo(function CartItem({ item }: CartItemProps) {
       {/* Details */}
       <div className="flex flex-1 flex-col justify-between gap-2">
         <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-zinc-900">
+          <div className="min-w-0 wrap-anywhere break-all">
+            <p className=" text-sm wrap-normal break-all font-medium text-zinc-900">
               {product.title}
             </p>
             <p className="mt-0.5 text-xs capitalize text-zinc-500">

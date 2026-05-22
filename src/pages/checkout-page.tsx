@@ -260,21 +260,23 @@ export function CheckoutPage() {
               <span>{formatPrice(totalPrice)}</span>
             </div>
 
-            <Button
-              type="submit"
-              size="lg"
-              className="mt-6 w-full gap-2"
-              disabled={isPending}
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" />
-                  Placing order…
-                </>
-              ) : (
-                `Pay ${formatPrice(totalPrice)}`
-              )}
-            </Button>
+            <div className="fixed bottom-0 lg:static left-0 p-3 lg:p- w-full bg-white">
+              <Button
+                type="submit"
+                size="lg"
+                className="mt-6 w-full gap-2 "
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    Placing order…
+                  </>
+                ) : (
+                  `Pay ${formatPrice(totalPrice)}`
+                )}
+              </Button>
+            </div>
 
             <p className="mt-3 text-center text-xs text-zinc-400">
               This is a demo — no real payment is processed.

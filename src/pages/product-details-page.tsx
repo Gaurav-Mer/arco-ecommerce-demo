@@ -196,7 +196,7 @@ export function ProductDetailsPage() {
             )}
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 sticky bottom-2">
             <Button
               size="lg"
               className="flex-1 gap-2"
