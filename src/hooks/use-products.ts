@@ -9,6 +9,7 @@ import {
 } from "@/services/product.service";
 
 export function useProducts(filters: ProductFilters) {
+
   // Price range is client-side only — exclude it from the query key so changing
   // the slider doesn't trigger a new network request for data we already have.
   const apiKey = {

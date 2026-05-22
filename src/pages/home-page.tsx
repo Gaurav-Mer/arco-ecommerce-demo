@@ -5,7 +5,6 @@ import { Separator } from "@/components/ui/separator";
 import { useFilter } from "@/context/filter/filter-context";
 
 export function HomePage() {
-  // const [filters, setFilters] = useState<ProductFilters>(defaultFilters);
   const { filters, setFilters } = useFilter()
 
   const { data, isLoading, isError } = useProducts(filters);
