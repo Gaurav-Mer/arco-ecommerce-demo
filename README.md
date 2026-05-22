@@ -89,6 +89,51 @@ Tailwind enabled fast and consistent UI development while shadcn/ui provided acc
 
 ---
 
+# Setup & Running Locally
+
+## Prerequisites
+
+Make sure you have the following installed:
+
+- Node.js (v18 or higher recommended)
+- npm / yarn / pnpm
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone <your-repository-url>
+```
+
+Move into the project directory:
+
+```bash
+cd <project-folder>
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The application will run locally at:
+
+```bash
+http://localhost:5173
+```
+
+---
+
 # Notes
 
 This project was intentionally built with a scalable frontend architecture and production-oriented engineering practices in mind while keeping the implementation lightweight and maintainable for the scope of the assignment.
