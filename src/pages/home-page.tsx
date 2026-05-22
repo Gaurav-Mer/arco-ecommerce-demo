@@ -4,7 +4,6 @@ import { ProductFiltersBar } from "@/components/products/product-filters";
 import { Separator } from "@/components/ui/separator";
 import { useFilter } from "@/context/filter/filter-context";
 
-5
 export function HomePage() {
   // const [filters, setFilters] = useState<ProductFilters>(defaultFilters);
   const { filters, setFilters } = useFilter()
@@ -51,11 +50,11 @@ export function HomePage() {
       </section>
 
       {/* Products section */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         {/* Filters */}
         <ProductFiltersBar filters={filters} onChange={setFilters} />
 
-        <Separator className="my-6" />
+        <Separator className="my-4" />
 
         {/* Count */}
         {!isLoading && !isError && (

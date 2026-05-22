@@ -1,31 +1,25 @@
 import { useEffect, useState } from "react";
 import { Search, X } from "lucide-react";
-import type { ProductFilters, SortOption } from "@/types";
-import { useCategories } from "@/hooks/use-products";
+import type { ProductFilters } from "@/types";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/hooks/use-debounce";
 import FilterDrawer from "./filter-drawer";
-import { SORT_OPTIONS } from "@/lib/constant";
+
 
 interface ProductFiltersProps {
   filters: ProductFilters;
   onChange: (filters: ProductFilters) => void;
 }
 
-
-
 export function ProductFiltersBar({ filters, onChange }: ProductFiltersProps) {
   const [searchInput, setSearchInput] = useState(filters.search);
-  const { data: categories = [] } = useCategories();
 
-  const debounce = useDebounce((val: string) => {
-    onChange({ ...filters, search: val })
+  const debounceSearch = useDebounce((val: string) => {
+    onChange({ ...filters, search: val });
   }, 500);
 
   useEffect(() => {
-    debounce(searchInput);
+    debounceSearch(searchInput);
   }, [searchInput]);
 
   function clearSearch() {
@@ -35,70 +29,39 @@ export function ProductFiltersBar({ filters, onChange }: ProductFiltersProps) {
 
 
   return (
-    <div className=" flex-col sticky grid grid-cols-12 top-16 px-0 lg:top-16 p-4 bg-white z-10 items-center gap-4">
-      {/* Search */}
-      <div className="relative flex-1 col-span-9 md:col-span-8">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-zinc-400" />
-        <Input
-          type="search"
-          placeholder="Search products…"
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          className="pl-9 pr-8"
-          aria-label="Search products"
-        />
-        {searchInput && (
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            className="absolute right-1.5 top-1/2 -translate-y-1/2"
-            onClick={clearSearch}
-            aria-label="Clear search"
-          >
-            <X className="size-3" />
-          </Button>
-        )}
+    <div className="sticky top-16 z-20  border-zinc-100 bg-white/95 backdrop-blur-xl">
+      <div className="py-4">
+        {/* Search row */}
+        <div className="flex items-center gap-2.5 justify-between">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-3.75 -translate-y-1/2 text-zinc-400" />
+            <Input
+              type="search"
+              placeholder="Search products..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="
+                h-8 w-full rounded-xl border border-zinc-200 bg-zinc-50
+                pl-10 pr-9 text-sm shadow-none
+                placeholder:text-zinc-400
+                transition-colors duration-150
+                hover:border-zinc-300
+                focus-visible:border-zinc-900 focus-visible:bg-white focus-visible:ring-0
+              "
+            />
+            {searchInput && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 transition-colors"
+              >
+                <X className="size-3.5" />
+              </button>
+            )}
+          </div>
+
+          <FilterDrawer onClear={() => setSearchInput("")} defaultFilter={filters} />
+        </div>
       </div>
-
-      {/* Category */}
-      <Select
-        value={filters.category}
-        onChange={(e) => {
-          onChange({ ...filters, category: e.target.value, search: "" })
-          setSearchInput("")
-        }
-        }
-        className="w-full"
-        aria-label="Filter by category"
-        containerClassName="col-span-2 md:block hidden"
-      >
-        <option value="">All categories</option>
-        {categories.map((cat) => (
-          <option key={cat} value={cat} className="capitalize">
-            {cat.replace(/-/g, " ")}
-          </option>
-        ))}
-      </Select>
-
-      {/* Sort */}
-      <Select
-        value={filters.sortBy}
-        onChange={(e) =>
-          onChange({ ...filters, sortBy: e.target.value as SortOption })
-        }
-        className="col-span-2 w-full"
-        aria-label="Sort products"
-        containerClassName="col-span-2 md:block hidden"
-      >
-        {SORT_OPTIONS.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </Select>
-
-      <FilterDrawer onClear={() => setSearchInput("")} defaultFilter={filters} />
     </div>
   );
 }
-

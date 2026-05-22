@@ -18,6 +18,14 @@ const CartPage = lazy(() =>
 const CheckoutPage = lazy(() =>
   import("@/pages/checkout-page").then((m) => ({ default: m.CheckoutPage }))
 );
+const OrderConfirmationPage = lazy(() =>
+  import("@/pages/order-confirmation-page").then((m) => ({
+    default: m.OrderConfirmationPage,
+  }))
+);
+const WishlistPage = lazy(() =>
+  import("@/pages/wishlist-page").then((m) => ({ default: m.WishlistPage }))
+);
 
 function PageFallback() {
   return (
@@ -66,6 +74,22 @@ export default function AppRoutes() {
           element={
             <Suspense fallback={<PageFallback />}>
               <CheckoutPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/order-confirmation"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <OrderConfirmationPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/wishlist"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <WishlistPage />
             </Suspense>
           }
         />

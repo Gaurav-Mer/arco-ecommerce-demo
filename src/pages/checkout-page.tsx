@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "sonner";
 import { Loader2, CreditCard, MapPin, User } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { formatPrice } from "@/utils/format";
+import type { OrderData } from "@/types/order";
+import { useCreateOrder } from "@/hooks/use-create-order";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(1, "Required"),
@@ -31,13 +32,13 @@ const checkoutSchema = z.object({
 type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
 export function CheckoutPage() {
-  const { items, totalPrice, totalItems, clearCart } = useCart();
+  const { items, totalPrice, totalItems } = useCart();
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutateAsync, isPending } = useCreateOrder();
 
   useEffect(() => {
     if (items.length === 0) navigate("/cart", { replace: true });
-  }, [items, navigate]);
+  }, [items]);
 
   const {
     register,
@@ -47,12 +48,33 @@ export function CheckoutPage() {
     resolver: zodResolver(checkoutSchema),
   });
 
-  async function onSubmit() {
-    setIsSubmitting(true);
-    await new Promise((res) => setTimeout(res, 1500));
-    clearCart();
-    toast.success("Order placed successfully! Thank you for your purchase.");
-    navigate("/");
+  async function onSubmit(data: CheckoutFormData) {
+    const order: OrderData = {
+      orderId: crypto.randomUUID(),
+      items: [...items],
+      total: totalPrice,
+      customerName: `${data.firstName} ${data.lastName}`,
+      email: data.email,
+      shippingAddress: {
+        address: data.address,
+        city: data.city,
+        zipCode: data.zipCode,
+      },
+      estimatedDelivery: new Date(
+        Date.now() + 7 * 24 * 60 * 60 * 1000
+      ).toISOString(),
+    };
+
+    try {
+      await mutateAsync(order);
+
+
+      navigate("/order-confirmation", {
+        state: order,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   if (items.length === 0) return null;
@@ -242,9 +264,9 @@ export function CheckoutPage() {
               type="submit"
               size="lg"
               className="mt-6 w-full gap-2"
-              disabled={isSubmitting}
+              disabled={isPending}
             >
-              {isSubmitting ? (
+              {isPending ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
                   Placing order…

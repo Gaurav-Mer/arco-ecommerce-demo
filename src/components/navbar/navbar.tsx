@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingBag, Menu } from "lucide-react";
+import { ShoppingBag, Menu, Heart } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
+import { useWishlist } from "@/hooks/use-wishlist";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -12,6 +13,7 @@ import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const { totalItems } = useCart();
+  const { count: wishlistCount } = useWishlist();
   const { pathname } = useLocation();
 
   return (
@@ -42,6 +44,19 @@ export function Navbar() {
 
         {/* Right actions */}
         <div className="flex items-center gap-1">
+          {/* Wishlist */}
+          <Link to="/wishlist" aria-label={`Wishlist, ${wishlistCount} items`}>
+            <Button variant="ghost" size="icon" className="relative">
+              <Heart className="size-5" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-medium text-white">
+                  {wishlistCount > 99 ? "99+" : wishlistCount}
+                </span>
+              )}
+            </Button>
+          </Link>
+
+          {/* Cart */}
           <Link to="/cart" aria-label={`Cart, ${totalItems} items`}>
             <Button variant="ghost" size="icon" className="relative">
               <ShoppingBag className="size-5" />
@@ -74,6 +89,20 @@ export function Navbar() {
                       )}
                     >
                       Shop
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link
+                      to="/wishlist"
+                      className="flex items-center gap-2 text-base text-zinc-500 hover:text-zinc-900 transition-colors"
+                    >
+                      <Heart className="size-4" />
+                      Wishlist
+                      {wishlistCount > 0 && (
+                        <span className="ml-auto flex size-5 items-center justify-center rounded-full bg-zinc-900 text-[10px] text-white">
+                          {wishlistCount}
+                        </span>
+                      )}
                     </Link>
                   </SheetClose>
                   <SheetClose asChild>

@@ -26,4 +26,5 @@ export interface ProductFilters {
   category: string;
   search: string;
   sortBy: SortOption;
+  priceRange: { min: number; max: number };
 }

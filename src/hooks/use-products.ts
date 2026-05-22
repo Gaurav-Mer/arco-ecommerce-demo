@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { ProductFilters, ProductsResponse } from "@/types";
 import {
@@ -8,13 +9,24 @@ import {
 } from "@/services/product.service";
 
 export function useProducts(filters: ProductFilters) {
-  return useQuery({
-    queryKey: ["products", filters],
+  // Price range is client-side only — exclude it from the query key so changing
+  // the slider doesn't trigger a new network request for data we already have.
+  const apiKey = {
+    search: filters.search,
+    category: filters.category,
+    sortBy: filters.sortBy,
+  };
+
+  const query = useQuery({
+    queryKey: ["products", apiKey],
     queryFn: async (): Promise<ProductsResponse> => {
       let response: ProductsResponse;
 
       if (filters.search.trim()) {
-        response = await searchProducts(filters.search?.trim() ?? "", filters?.category);
+        response = await searchProducts(
+          filters.search.trim(),
+          filters.category
+        );
       } else if (filters.category) {
         response = await getProductsByCategory(filters.category);
       } else {
@@ -32,6 +44,19 @@ export function useProducts(filters: ProductFilters) {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  // Why: price filtering is applied here instead of in the queryFn so the
+  // cached API response is reused when only the slider moves.
+  const filteredData = useMemo(() => {
+    if (!query.data) return query.data;
+    const { min, max } = filters.priceRange;
+    const filtered = query.data.products.filter(
+      (p) => p.price >= min && p.price <= max
+    );
+    return { ...query.data, products: filtered, total: filtered.length };
+  }, [query.data, filters.priceRange]);
+
+  return { ...query, data: filteredData };
 }
 
 export function useCategories() {

@@ -1,8 +1,9 @@
-import type { MouseEvent } from "react";
+import { memo, type MouseEvent } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Heart } from "lucide-react";
 import type { Product } from "@/types";
 import { useCart } from "@/hooks/use-cart";
+import { useWishlist } from "@/hooks/use-wishlist";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductRating } from "./product-rating";
@@ -12,12 +13,20 @@ interface ProductCardProps {
   product: Product;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+// Why: prevents re-renders when parent filter state changes but this product's data hasn't
+export const ProductCard = memo(function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
+  const { toggle, isWishlisted } = useWishlist();
+  const wishlisted = isWishlisted(product.id);
 
   function handleAddToCart(e: MouseEvent) {
     e.preventDefault();
     addItem(product);
+  }
+
+  function handleToggleWishlist(e: MouseEvent) {
+    e.preventDefault();
+    toggle(product);
   }
 
   return (
@@ -39,6 +48,15 @@ export function ProductCard({ product }: ProductCardProps) {
             -{Math.round(product.discountPercentage)}%
           </span>
         )}
+        <button
+          onClick={handleToggleWishlist}
+          aria-label={wishlisted ? `Remove ${product.title} from wishlist` : `Save ${product.title} to wishlist`}
+          className="absolute top-2.5 right-2.5 flex size-7 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm transition-opacity duration-200 opacity-0 group-hover:opacity-100"
+        >
+          <Heart
+            className={`size-3.5 transition-colors ${wishlisted ? "fill-zinc-900 text-zinc-900" : "text-zinc-500"}`}
+          />
+        </button>
       </div>
 
       {/* Info */}
@@ -74,4 +92,4 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
     </Link>
   );
-}
+});

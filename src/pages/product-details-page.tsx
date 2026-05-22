@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ShoppingBag, ChevronLeft, CheckCircle, XCircle } from "lucide-react";
+import { ShoppingBag, ChevronLeft, CheckCircle, XCircle, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { useProduct } from "@/hooks/use-product";
 import { useProducts } from "@/hooks/use-products";
 import { useCart } from "@/hooks/use-cart";
+import { useWishlist } from "@/hooks/use-wishlist";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { ProductCard } from "@/components/products/product-card";
 import { ProductRating } from "@/components/products/product-rating";
 import { formatPrice, formatDiscount } from "@/utils/format";
+import { defaultFilters } from "@/lib/constant";
 
 export function ProductDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -20,14 +22,13 @@ export function ProductDetailsPage() {
 
   const { data: product, isLoading, isError } = useProduct(productId);
   const { addItem } = useCart();
+  const { toggle, isWishlisted } = useWishlist();
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-
   const { data: relatedData } = useProducts({
+    ...defaultFilters,
     category: product?.category ?? "",
-    search: "",
-    sortBy: "rating",
   });
 
   const relatedProducts = relatedData?.products
@@ -80,10 +81,18 @@ export function ProductDetailsPage() {
 
   const activeImage = selectedImage ?? product.thumbnail;
   const inStock = product.stock > 0;
+  const wishlisted = isWishlisted(product.id);
 
   function handleAddToCart() {
     addItem(product!);
     toast.success(`${product!.title} added to cart`);
+  }
+
+  function handleToggleWishlist() {
+    toggle(product!);
+    toast.success(
+      isWishlisted(product!.id) ? "Removed from wishlist" : "Saved to wishlist"
+    );
   }
 
   return (
@@ -114,10 +123,11 @@ export function ProductDetailsPage() {
                 <button
                   key={i}
                   onClick={() => setSelectedImage(img)}
-                  className={`size-16 shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${activeImage === img
-                    ? "border-zinc-900"
-                    : "border-transparent hover:border-zinc-300"
-                    }`}
+                  className={`size-16 shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
+                    activeImage === img
+                      ? "border-zinc-900"
+                      : "border-transparent hover:border-zinc-300"
+                  }`}
                   aria-label={`View image ${i + 1}`}
                 >
                   <img
@@ -186,15 +196,29 @@ export function ProductDetailsPage() {
             )}
           </div>
 
-          <Button
-            size="lg"
-            className="gap-2"
-            disabled={!inStock}
-            onClick={handleAddToCart}
-          >
-            <ShoppingBag className="size-4" />
-            {inStock ? "Add to Cart" : "Out of Stock"}
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              size="lg"
+              className="flex-1 gap-2"
+              disabled={!inStock}
+              onClick={handleAddToCart}
+            >
+              <ShoppingBag className="size-4" />
+              {inStock ? "Add to Cart" : "Out of Stock"}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handleToggleWishlist}
+              aria-label={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
+            >
+              <Heart
+                className={`size-4 transition-colors ${
+                  wishlisted ? "fill-zinc-900" : ""
+                }`}
+              />
+            </Button>
+          </div>
 
           {product.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5">

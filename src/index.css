@@ -128,3 +128,24 @@
     @apply font-sans;
     }
 }
+
+/* Dual range slider thumb styling */
+.range-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: all;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #18181b;
+  cursor: pointer;
+}
+
+.range-thumb::-moz-range-thumb {
+  pointer-events: all;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #18181b;
+  cursor: pointer;
+  border: none;
+}

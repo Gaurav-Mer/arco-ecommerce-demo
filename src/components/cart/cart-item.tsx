@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import type { CartItem as CartItemType } from "@/types";
 import { useCart } from "@/hooks/use-cart";
@@ -8,7 +9,8 @@ interface CartItemProps {
   item: CartItemType;
 }
 
-export function CartItem({ item }: CartItemProps) {
+// Why: prevents re-renders when sibling cart items change quantity
+export const CartItem = memo(function CartItem({ item }: CartItemProps) {
   const { updateQuantity, removeItem } = useCart();
   const { product, quantity } = item;
 
@@ -79,4 +81,4 @@ export function CartItem({ item }: CartItemProps) {
       </div>
     </div>
   );
-}
+});
