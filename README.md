@@ -74,6 +74,25 @@ Tailwind enabled fast and consistent UI development while shadcn/ui provided acc
 
 ---
 
+# What I Would Improve With More Time
+
+- Authentication and user accounts
+- Real payment gateway integration (Stripe)
+- Order history and user profile management
+- Infinite scrolling with `useInfiniteQuery`
+- Product reviews and ratings
+- Better accessibility and keyboard navigation
+- Unit and integration tests
+- Skeleton loading states
+- Dark mode support
+- Backend integration with real inventory management
+
+---
+
+# Notes
+
+This project was intentionally built with a scalable frontend architecture and production-oriented engineering practices in mind while keeping the implementation lightweight and maintainable for the scope of the assignment.
+
 # Architecture & Folder Structure
 
 ```bash
@@ -89,3 +108,4 @@ src/
  ├── services/       # API service layer
  ├── types/          # Shared TypeScript types
  └── utils/          # Utility/helper functions
+ 
